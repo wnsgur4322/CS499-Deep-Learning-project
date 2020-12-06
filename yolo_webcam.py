@@ -143,7 +143,7 @@ if __name__ == "__main__":
 
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-w", "--dataset", type=str,
-	help="set object detection weight and data file (type original or tiny or shape)")
+	help="set object detection weight and data file (type original, tiny, shape, 10_food, 46_food, 46_food_noised)")
 	ap.add_argument("-c", "--confidence", type=float, default=0.5,
 	help="minimum probability to filter weak detections")
 	ap.add_argument("-t", "--threshold", type=float, default=0.3,
@@ -185,6 +185,8 @@ if __name__ == "__main__":
 		net = cv2.dnn.readNet("trained_data/shape/yolov3-tiny-shape_best.weights","trained_data/shape/yolov3-tiny-shape.cfg") #shape dataset
 	if args["dataset"] == "46_food":
 		net = cv2.dnn.readNet("trained_data/46_food/yolov4-tiny-food_best.weights","trained_data/46_food/yolov4-tiny-food.cfg") # 46 classes food
+	if args["dataset"] == "46_food_noised":
+		net = cv2.dnn.readNet("trained_data/46_noised_food/yolov4-tiny-food-noise_best.weights","trained_data/46_food/yolov4-tiny-food-noise.cfg") # 46 classes(noised) food
 
 # set GPU run
 	#net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
@@ -200,6 +202,9 @@ if __name__ == "__main__":
 		    	classes = [line.strip() for line in f.readlines()]
 	if args["dataset"] == "46_food":
 		with open("trained_data/46_food/obj.names","r") as f:
+		    	classes = [line.strip() for line in f.readlines()]
+	if args["dataset"] == "46_food_noised":
+		with open("trained_data/46_noised_food/obj.names","r") as f:
 		    	classes = [line.strip() for line in f.readlines()]
 
 	print(classes)
