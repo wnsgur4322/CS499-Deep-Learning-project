@@ -30,7 +30,8 @@ if __name__ == "__main__":
 		net = cv2.dnn.readNet("trained_data/tiny/yolov3-tiny.weights","trained_data/tiny/yolov3-tiny.cfg") #Tiny Yolo
 	if args["dataset"] == "shape":
 		net = cv2.dnn.readNet("trained_data/shape/yolov3-tiny-shape_best.weights","trained_data/shape/yolov3-tiny-shape.cfg") #shape dataset
-
+	if args["dataset"] == "46_food":
+		net = cv2.dnn.readNet("trained_data/46_food/yolov4-tiny-food_best.weights","trained_data/46_food/yolov4-tiny-food.cfg") # 46 classes food
 
 	#load class file (object label)
 	classes = []
@@ -40,6 +41,9 @@ if __name__ == "__main__":
 	if args["dataset"] == "shape":
 		with open("trained_data/shape/obj.names","r") as f:
 		    	classes = [line.strip() for line in f.readlines()]
+	if args["dataset"] == "46_food":
+		with open("trained_data/46_food/obj.names","r") as f:
+		    	classes = [line.strip() for line in f.readlines()]
 	print(classes)
 
 	# initialize a list of colors to represent each possible class label
@@ -47,7 +51,7 @@ if __name__ == "__main__":
 
     # load an image and grab its spatial dimensions
 	img = cv2.imread(args2.input_image)
-	img = cv2.resize(img, (800, 600))
+	img = cv2.resize(img, (160, 160))
 	cv2.imshow('input image', img)
 
 	(H, W) = img.shape[:2]
