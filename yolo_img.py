@@ -34,6 +34,8 @@ if __name__ == "__main__":
 		net = cv2.dnn.readNet("trained_data/46_food/yolov4-tiny-food_best.weights","trained_data/46_food/yolov4-tiny-food.cfg") # 46 classes food
 	if args["dataset"] == "46_food_noised":
 		net = cv2.dnn.readNet("trained_data/46_noised_food/yolov4-tiny-food-noise_best.weights","trained_data/46_food/yolov4-tiny-food-noise.cfg") # 46 classes(noised) food
+	if args["dataset"] == "4_food":
+		net = cv2.dnn.readNet("trained_data/4_food/yolov4-tiny-food-4class_best.weights","trained_data/4_food/yolov4-tiny-food-4class.cfg") # 4 classes food tiny
 
 	#load class file (object label)
 	classes = []
@@ -49,12 +51,16 @@ if __name__ == "__main__":
 	if args["dataset"] == "46_food_noised":
 		with open("trained_data/46_noised_food/obj.names","r") as f:
 		    	classes = [line.strip() for line in f.readlines()]
+	if args["dataset"] == "4_food":
+		with open("trained_data/4_food/obj.names","r") as f:
+		    	classes = [line.strip() for line in f.readlines()]
 	print(classes)
 
 	# initialize a list of colors to represent each possible class label
 	COLORS = np.random.uniform(0,255,size=(len(classes),3))
 
     # load an image and grab its spatial dimensions
+	print(args2.input_image)
 	img = cv2.imread(args2.input_image)
 	img = cv2.resize(img, (160, 160))
 	cv2.imshow('input image', img)
