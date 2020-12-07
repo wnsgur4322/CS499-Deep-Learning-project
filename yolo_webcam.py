@@ -374,13 +374,15 @@ if __name__ == "__main__":
 					print("len:",len(contours))
 					print("area:",cv2.contourArea(contours[i]))
 					cv2.putText(frame, "Area: " + str(int(cv2.contourArea(contours[i]))), (x + w + 20, y + 45), font, 0.7, (0, 255, 0), 1)
-					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) < 30 and cv2.contourArea(contours[i]) > 0:
+					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) < 2500 and cv2.contourArea(contours[i]) > 1000:
 						print("Too less sauce!!")
 						cv2.putText(frame, "Sauce : less portion",(20,80),font,1,(0,0,255),1)
-					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) > 100:
+
+					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) > 7000:
 						print("Too much sauce!!")
 						cv2.putText(frame, "Sauce : exceed portion",(20,80),font,1,(0,0,255),1)
-					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) < 70 and cv2.contourArea(contours[i]) > 30:
+
+					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) < 7000 and cv2.contourArea(contours[i]) > 3000:
 						print("Sauce has good portion")
 						cv2.putText(frame, "Sauce : good portion",(20,80),font,1,(0,255,0),1)
 					"""
