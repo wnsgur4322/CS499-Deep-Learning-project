@@ -117,6 +117,8 @@ if __name__ == "__main__":
 	# initialize the list of threshold methods
 	methods = [
 		("THRESH_BINARY", cv2.THRESH_BINARY),
+		("CHAIN_APPROX_NONE", cv2.CHAIN_APPROX_NONE),
+		("RETR_EXTERNAL", cv2.RETR_EXTERNAL),
 		("THRESH_BINARY_INV", cv2.THRESH_BINARY_INV),
 		("THRESH_TRUNC", cv2.THRESH_TRUNC),
 		("THRESH_TOZERO", cv2.THRESH_TOZERO),

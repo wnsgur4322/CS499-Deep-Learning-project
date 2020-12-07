@@ -120,12 +120,11 @@ def get_contours(img, imgContour, frame, x, y, w, h, roi_color):
 						cv2.drawContours(roi_color, cnt, -1, (255, 0, 255), 1)
 						peri = cv2.arcLength(cnt, True)
 						approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
-						print(len(approx))
 						x2 , y2 , w2, h2 = cv2.boundingRect(approx)
 						cv2.rectangle(frame, (x , y), (x + w + pad_w , y + h + pad_h), (0, 255, 0), 1)
 
 						cv2.putText(frame, "Points: " + str(len(approx)), (x + w + 20, y + 20), font, 0.7, (0, 255, 0), 1)
-						cv2.putText(frame, "Area: " + str(int(area)), (x + w + 20, y + 45), font, 0.7, (0, 255, 0), 1)
+						#cv2.putText(frame, "Area: " + str(int(area)), (x + w + 20, y + 45), font, 0.7, (0, 255, 0), 1)
 
 		return contours
 
@@ -286,22 +285,6 @@ if __name__ == "__main__":
 				scores = detection[5:]
 				class_id = np.argmax(scores)
 				confidence = scores[class_id]
-				if confidence > 0.6:
-					#object detected
-					center_x= int(detection[0]*width)
-					center_y= int(detection[1]*height)
-					w = int(detection[2]*width)
-					h = int(detection[3]*height)
-
-		#Showing info on screen/ get confidence score of algorithm in detecting an object in blob
-		class_ids=[]
-		confidences=[]
-		boxes=[]
-		for out in outs:
-			for detection in out:
-				scores = detection[5:]
-				class_id = np.argmax(scores)
-				confidence = scores[class_id]
 				if confidence > 0.5:
 					#object detected
 					center_x= int(detection[0]*width)
@@ -331,6 +314,9 @@ if __name__ == "__main__":
 		label = None
 
 		without_bounding = frame.copy()
+		food_counter = 0
+		layover_flag = 0
+		c = [None]*100
 		for i in range(len(boxes)):
 			if i in indexes:
 				print(i)
@@ -339,6 +325,11 @@ if __name__ == "__main__":
 				#hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())		 #
 				#found,w = hog.detectMultiScale(frame, winStride=(8,8), padding=(32,32), scale=1.00) #
 				print("found ", str(classes[class_ids[i]])) #
+
+				# for food portion : cracker
+				if str(classes[class_ids[i]]) == 'cracker':
+					food_counter += 1
+					
 
 				#distane measurement
 				x,y,w,h = boxes[i]
@@ -381,8 +372,12 @@ if __name__ == "__main__":
 					roi_color = frame[y - pad_h : y + h + pad_h, x - pad_w : x + w + pad_w]
 					contours = get_contours(imgDil, imgContour, frame, x, y, w, h, roi_color)
 					print("len:",len(contours))
-					print("area:",cv2.contourArea(contours[0]))
-					#cv2.drawContours(frame, contours, -1, (0,255,0), 3)
+					print("area:",cv2.contourArea(contours[i]))
+					cv2.putText(frame, "Area: " + str(int(cv2.contourArea(contours[i]))), (x + w + 20, y + 45), font, 0.7, (0, 255, 0), 1)
+					#if food_counter == 1 and cv2.contourArea(contours[i]) > 100:
+					#	layover_flag = 1
+					#	print("Too much crackers!!")
+					#	cv2.putText(frame, "Cracker : exceed portion",(20,60),font,2,(255,0,0),1)
 					"""
 					imgray = cv.cvtColor(without_bounding, cv.COLOR_BGR2GRAY)
 					ret, thresh = cv.threshold(imgray, 127, 255, 0)
@@ -390,6 +385,25 @@ if __name__ == "__main__":
 					
 					
 					"""
+					c[i] = max(contours, key=cv2.contourArea)
+					# determine the most extreme points along the contour
+					extLeft = tuple(c[i][c[i][:, :, 0].argmin()][0])
+					extRight = tuple(c[i][c[i][:, :, 0].argmax()][0])
+					extTop = tuple(c[i][c[i][:, :, 1].argmin()][0])
+					extBot = tuple(c[i][c[i][:, :, 1].argmax()][0])
+
+					cv2.circle(roi_color, extLeft, 4, (0, 0, 255), -1)
+					cv2.circle(roi_color, extRight, 4, (0, 255, 0), -1)
+					cv2.circle(roi_color, extTop, 4, (255, 0, 0), -1)
+					cv2.circle(roi_color, extBot, 4, (255, 255, 0), -1)
+					
+					cv2.line(roi_color, extTop, extBot, (255,255,255), 1)
+					top_to_bottom = extBot[1] - extTop[1]
+					cv2.putText(frame, "height: {}".format(top_to_bottom), (extBot[1], extTop[1] + 180), font, 0.7, color, 1)
+
+					cv2.line(roi_color, extRight, extLeft, (255,255,255), 1)
+					left_to_right = extRight[0] - extLeft[0] 
+					cv2.putText(frame, "width: {}".format(left_to_right), (extLeft[0] + 220, extRight[0] + 40), font, 0.7, color, 1)
 				except:
 					continue
 				
@@ -430,7 +444,17 @@ if __name__ == "__main__":
 				center = (int(x+w/2),int(y+h/2))
 				radius = int(abs(math.tan(w/2)) * get_distance)
 				#cv2.circle(frame,center,int(math.sqrt((w**2) + (h**2))/4),(0,255,0),2)
-				
+		
+		if food_counter == 3 and layover_flag == 0:
+			print("Cracker has good portion")
+			cv2.putText(frame, "Cracker : good portion",(20,60),font,1,(0,255,0),1)
+		if food_counter > 3 and layover_flag == 0:
+			print("Too much crackers!!")
+			cv2.putText(frame, "Cracker : exceed portion",(20,60),font,1,(0,0,255),1)
+		if food_counter < 3 and food_counter > 0 and layover_flag == 0:
+			print("less crackers!!")
+			cv2.putText(frame, "Cracker : less portion",(20,60),font,1,(0,0,255),1)
+
 		elapsed_time = time.time() - starting_time
 		fps_cal=frame_id/elapsed_time
 		cv2.putText(frame,"FPS:"+str(round(fps_cal,2)),(10,50),font,2,(0,0,0),1)
