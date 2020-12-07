@@ -198,11 +198,11 @@ if __name__ == "__main__":
 
 			cv2.line(roi_color, extTop, extBot, (255,255,255), 1)
 			top_to_bottom = extBot[1] - extTop[1]
-			cv2.putText(img, "{}".format(top_to_bottom), (extBot[1], extTop[1] + 180), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+			cv2.putText(img, "height: {}".format(top_to_bottom), (extBot[1], extTop[1] + 180), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 1)
 
 			cv2.line(roi_color, extRight, extLeft, (255,255,255), 1)
 			left_to_right = extRight[0] - extLeft[0] 
-			cv2.putText(img, "{}".format(left_to_right), (extLeft[0] + 220, extRight[0] + 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+			cv2.putText(img, "width: {}".format(left_to_right), (extLeft[0] + 220, extRight[0] + 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 1)
 
 			cv2.imshow('contours', roi_color)
 

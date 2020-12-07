@@ -374,10 +374,15 @@ if __name__ == "__main__":
 					print("len:",len(contours))
 					print("area:",cv2.contourArea(contours[i]))
 					cv2.putText(frame, "Area: " + str(int(cv2.contourArea(contours[i]))), (x + w + 20, y + 45), font, 0.7, (0, 255, 0), 1)
-					#if food_counter == 1 and cv2.contourArea(contours[i]) > 100:
-					#	layover_flag = 1
-					#	print("Too much crackers!!")
-					#	cv2.putText(frame, "Cracker : exceed portion",(20,60),font,2,(255,0,0),1)
+					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) < 30 and cv2.contourArea(contours[i]) > 0:
+						print("Too less sauce!!")
+						cv2.putText(frame, "Sauce : less portion",(20,80),font,1,(0,0,255),1)
+					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) > 100:
+						print("Too much sauce!!")
+						cv2.putText(frame, "Sauce : exceed portion",(20,80),font,1,(0,0,255),1)
+					if str(classes[class_ids[i]]) == 'sauce(ketchup)' and cv2.contourArea(contours[i]) < 70 and cv2.contourArea(contours[i]) > 30:
+						print("Sauce has good portion")
+						cv2.putText(frame, "Sauce : good portion",(20,80),font,1,(0,255,0),1)
 					"""
 					imgray = cv.cvtColor(without_bounding, cv.COLOR_BGR2GRAY)
 					ret, thresh = cv.threshold(imgray, 127, 255, 0)
